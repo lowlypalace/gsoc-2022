@@ -86,7 +86,7 @@ model = skorch(
 ) 
 ```
 
-Here, we won't be defining a custom PyTorch module, but feel free to pass any PyTorch network as  `module`  parameter to  `skorch()`  method. As we don't specify any module, the predefined model  `torchvision.models.resnet18()`  will be used by default. We've set  `epochs=15`  above, but feel free to lower this value to train the model faster or increase it to improve the results. There are many other useful parameters that can be passed in to a  `skorch`  instance, such as  `valid_dataset`  to be used for the validation. Make sure to check out docs to learn more about them!
+Here, we won't be defining a custom PyTorch module, but feel free to pass any PyTorch network as  `module`  parameter to  `skorch()`  method. As we don't specify any module, the predefined model  `torchvision.models.resnet18()`  will be used by default. We've set  `epochs=15`  above, but feel free to lower this value to train the model faster or increase it to improve the results. There are many other useful parameters that can be passed in to a  `skorch`  instance, such as  `valid_dataset`  to be used for the validation. 
 
 ### Cleanlab Integration
 

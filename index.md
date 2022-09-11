@@ -24,5 +24,6 @@ We've talked about how label errors can be be detrimental to the success of an M
 By communicating with my mentors, we set up a few research questions that we were looking to answer:
 
 > *What is the impact of label errors on a model performance? Can we implement an experiment that will enable us quantify the impact? How do we ensure that our experiments are unbiased and reproducible?*
+
 > *Assuming that the label errors could be found, what would be the next steps? Can we find a way to automatically prune noisy examples from a dataset? Does it make sense to leave some of the examples, but correct their labels?*
 

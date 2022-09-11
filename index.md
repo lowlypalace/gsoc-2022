@@ -33,8 +33,9 @@ We've talked about how label errors can be be detrimental to the success of an M
 By communicating with my mentors, we set up a few research questions that we were looking to answer:
 
 > ***Research Question 1**: What is the impact of label errors on a model performance? Can we implement an experiment that will enable us quantify the impact? How do we ensure that our experiments are unbiased and reproducible?*
-> ***Research Question 2**: Assuming that the label errors could be found, what would be the next steps to fix the errors? Can we find a way to automatically prune or relabel noisy examples from a dataset? Does it make sense to leave some of the examples, but correct their labels?*
 
+> ***Research Question 2**: Assuming that the label errors could be found, what would be the next steps to fix the errors? Can we find a way to automatically prune or relabel noisy examples from a dataset? Does it make sense to leave some of the examples, but correct their labels?*
+> 
 ### Label Errors Impact on Model Performance 
 
 Let's try to break down the first research question. To measure the impact of label errors, we'll need to find a metric to optimize for. Accuracy is one metric for evaluating supervised models, which is the fraction of predictions that a model got right. Now, to quantify the impact of label errors, we'll need a way to benchmark a model trained on clean data and a model trained on noisy data. By looking at the accuracy of the predictions made by a model trained on noisy data and on clean data, we can compare the approaches against each other. Let's suppose we can compare this metric on some dataset. However, we don't necessarily know the ground truth, as there could already be errors in the dataset. We can only be certain if we introduce these label errors ourselves, assuming that we do it on a dataset that has a relatively low rate of label errors in the first place. To overcome this, we can artificially introduce some noise to a dataset that we assume has a low rate of label errors. We can introduce some random noise to the training set by randomly flipping the labels. 

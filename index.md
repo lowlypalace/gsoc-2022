@@ -9,10 +9,14 @@ This is a summary of the work I did for Activeloop's open-source open source pac
 - Repository: [Activeloop Hub](https://github.com/activeloopai/Hub)
 - Mentors: [Davit Buniatyan](https://github.com/davidbuniat), [Fariz Rahman](https://github.com/farizrahman4u), [Ivo Stranic](https://github.com/istranic), [Mikayel Harutyunyan](https://github.com/mikayelh)
 
+---
+
 ## Contributions
 - Pull Request: [Cleanlab + Skorch Integration](https://github.com/activeloopai/Hub/pull/1821)
 - Tutorial of the Workflow (Colab): [Finding Label Errors in Image Classification Dataset](https://colab.research.google.com/drive/1ufji2akWX0r6DcUD70vK3KiBvq0m6xbq?usp=sharing)
 - Blog Post: TBA
+
+---
 
 ## Introduction
 
@@ -27,10 +31,14 @@ In machine learning, a properly labeled dataset that you use as the objective st
 If you've ever used datasets like CIFAR, MNIST, ImageNet, or IMDB, you likely assumed the class labels are correct. Supervised ML often assumes that the labels we train our model on are correct, but [recent studies](https://www.technologyreview.com/2021/04/01/1021619/ai-data-errors-warp-machine-learning-progress/) have discovered that even highly-curated ML benchmark datasets are full of [label errors](https://labelerrors.com/). What's more, the [Northcutt's NeurIPS 2021](https://arxiv.org/abs/2103.14749) work on analyzing errors in datasets found out hundreds of samples across popular datasets where an agreement could not be reached on true ground truth despite looking at collating outcomes from labelers. Furthermore, the labels in datasets from real-world applications can be of [far lower quality](https://go.cloudfactory.com/hubfs/02-Contents/3-Reports/Crowd-vs-Managed-Team-Hivemind-Study.pdf). There are several factors that lead to error in the dataset, such as a human error made while annotating the examples. These days, it is increasingly the training data, not the models or infrastructure, that decides whether machine learning will be a success or failure. However, training our ML models to predict fundamentally flawed labels seems problematic. This becomes especially problematic when these errors reach test sets, the subsets of datasets used to validate the trained model. 
 Even worse, we might train and evaluate these models with flawed labels and deploy the resulting models at scale. 
 
+---
+
 ## Hub + Cleanlab
 Hub community has uploaded a variety of popular machine learning datasets like [CIFAR-10](https://docs.activeloop.ai/datasets/cifar-10-dataset), MNIST or Fashion-MNIST, and [ImageNet](https://docs.activeloop.ai/datasets/imagenet-dataset/?utm_source=github&utm_medium=github&utm_campaign=github_readme&utm_id=readme). Without any need to download, these datasets can be accessed and streamed with Hub with one line of code. This enables you to explore the datasets and train models without downloading machine learning datasets regardless of their size. However, most of these datasets contain [label errors](https://labelerrors.com/). What can we do about this? To tackle this problem, the Northcutt's group of researchers co-founded [Cleanlab](https://cleanlab.ai/), a tool that allows to automatically find and fix label errors in ML datasets. Under the hood, it uses [Confident Learning](https://arxiv.org/abs/1911.00068) (CL) algorithm to detect label errors. 
 
 Nevertheless, the Hub dataset is a [specific format of a dataset](https://docs.activeloop.ai/how-hub-works/data-layout) that uses a columnar storage architecture, and the columns are referred to as tensors. It is not trivial how to set up the workflow for finding label errors, as Cleanlab does not support Hub datasets. Therefore, users are required to make their models and data format compatible and then run a training pipeline that would allow them to utilize Cleanlab to find label issues. How can we abstract this complexity and provide users with a clean and intuitive interface to find label errors? Furthermore, how can we use Hub's powerful [data visualization](https://docs.activeloop.ai/dataset-visualization) tools to enable users to visualize these insights and make informed decisions on what to do with noisy data?
+
+---
 
 ## Experiments
 We've talked about how label errors can be detrimental to the success of an ML project. In theory, this assumption holds a strong argument. However, we wanted to prove it by running a few experiments before introducing this feature to our users. 
@@ -67,6 +75,8 @@ As a next step, we try to set a threshold that would tell us the ratio of exampl
 On the graph, we plotted the accuracy of the models trained with training sets that were fixed with different threshold values. For example, `100% Prune / 0% Relabel` indicates the accuracy of the model when all erroneous samples and their labels were deleted, while `0% Prune / 100% Relabel` shows the accuracy of the model when all of the samples were left but relabelled.
 
 Looking at the graph, we can say that Cleanlab does a great job identifying labels but not necessarily relabeling them automatically. As soon as we increase the number of labels we'd like to relabel, the accuracy starts to go down linearly. The training set with **100%** of pruning got the highest accuracy, while the training set with all labels relabelled got the worst accuracy. The confident learning approach can sometimes get it wrong, too, like confusing a correctly labeled image. Therefore, it is best to go through the examples in a dataset and decide whether to remove or relabel an example. With these insights, we know that it makes sense to provide users with the functionality to prune erroneous examples automatically. However, we might want to give the users some decision-making tools, such as quickly visualizing the labels that are most likely to be erroneous.
+
+---
 
 ## Development Phase
 After running the experiments, we now have enough insights that should allow us to move the next step. We'll need to provide an easy-to-use and clean interface to find label errors automatically and use these insights to make informed decisions on what to do next with these errors.
@@ -138,11 +148,14 @@ Another handy method is `clean_view()`, which allows us to get a view of the dat
 ds_clean = clean_view(dataset=ds_train, label_issues=label_issues)
 ```
 
+---
 
 ## GSoC Experience
 I had an ambiguous high-level problem that I was trying to solve, and I was fortunate that the mentors gave me a lot of freedom to solve this problem. It's not something I can take for granted as I had a high responsibility to my mentors, but it was really rewarding to own the whole technical process from big idea to shipping out the solution. During my GSoC, I found myself drawing on much more than just my experience in software engineering. For example, I utilized my experience in academic research, presentation skills, and writing to execute the project successfully. I learned how to collaborate on a product across other teams, and, perhaps, most importantly, how to take feedback and iterate rapidly. Additionally, I improved my leadership and communication skills by co-leading community efforts. I welcomed new open source contributors to Hub, assigned them tasks, and helped them get started. 
 
 Even though the codebase is immense and unfamiliar to me, I succeeded in this project because I learned to ask the right questions to understand the scope of a problem. Even if I'm unfamiliar with the technology, I can ask strategic questions to get enough understanding to work towards a solution. I also always come back to thinking about how a user might experience a feature or what else they might need or want. This has helped me stay focused on the problem I'm solving, even though a problem was ambiguous. It's also important not to be afraid when facing a new problem. In my day-to-day, I was constantly working on things that were new to me or that I'd never done before. This is just one feature I developed within a large codebase, but it shows how I could start with the high-level goal, carefully consider the technical implications and design a  solution.
+
+---
 
 ## Takeaways
 
@@ -153,6 +166,8 @@ If someone who's reading this is interested in participating in GSoC, here are a
 - It helps to develop big-picture skills. Keep high-level use cases and end-users in mind while going layers deeper down to the code to actually implement a feature. It really helps to think about how a user might experience a feature or what else they might need.
 
 - Finally, take ownership of the project you're working on. Be proactive in setting up syncs, come up with discussion points ahead of your mentors, and plan your next steps before the mentors ask you to do so. Communicate your ideas in a clear, concise way so that they could understand where you're at and give you the most help they can. This will help you to take their feedback and iterate rapidly.
+
+---
 
 ## Acknowledgements
 

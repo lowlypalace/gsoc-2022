@@ -82,7 +82,7 @@ To make our model `scikit-learn` compatible, we'll use  `skorch()`  method from 
 from hub.integrations import skorch
 
 model = skorch(
-    dataset=ds_train,
+    dataset=ds,
     epochs=15,  # Set the number of epochs.
     batch_size=8,
     transform=transform,
@@ -100,8 +100,8 @@ Let’s look at how we can find label errors in a Hub dataset. We will use a `cl
 from hub.integrations.cleanlab import clean_labels
 
 label_issues = clean_labels(
-    dataset=ds_train,
-    model=model_copy,  # Pass instantiated skorch module.
+    dataset=ds,
+    model=model,  # Pass instantiated skorch module.
     folds=5,  # Set the number of folds for cross-validation.
 )
 ```

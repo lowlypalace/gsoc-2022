@@ -144,6 +144,16 @@ I had an ambiguous high-level problem that I was trying to solve, and I was fort
 
 Even though the codebase is immense and unfamiliar to me, I succeeded in this project because I learned to ask the right questions to understand the scope of a problem. Even if I'm unfamiliar with the technology, I can ask strategic questions to get enough understanding to work towards a solution. I also always come back to thinking about how a user might experience a feature or what else they might need or want. This has helped me stay focused on the problem I'm solving, even though a problem was ambiguous. It's also important not to be afraid when facing a new problem. In my day-to-day, I was constantly working on things that were new to me or that I'd never done before. This is just one feature I developed within a large codebase, but it shows how I could start with the high-level goal, carefully consider the technical implications and design a  solution.
 
+## Takeaways
+
+If someone who's reading this is interested in participating in GSoC, here are a few advices I can derive from my experience.
+
+- Don't be afraid when facing a new problem. Even if unfamiliar with the technology, learn to ask strategic questions to get enough understanding to work towards a solution. As you work through the problem, clarify the requirements, edge cases and trade-offs. Try to scope out and break down the problem you're working on.
+
+- It helps to develop big-picture skills. Keep high-level use cases and end-users in mind while going layers deeper down to the code to actually implement a feature. It really helps to think about how a user might experience a feature or what else they might need.
+
+- Finally, take ownership of the project you're working on. Be proactive in setting up syncs, come up with discussion points ahead of your mentors, and plan your next steps before the mentors ask you to do so. Communicate your ideas in a clear, concise way so that they could understand where you're at and give you the most help they can. This will help you to take their feedback and iterate rapidly.
+
 ## Acknowledgements
 
 I want to thank my mentors, the Activeloop community, and Google for giving me an enriching experience this summer. I am incredibly thankful for the opportunity to participate in this program and enhance my programming, communication, and leadership skills while improving the [Hub](https://github.com/activeloopai/Hub) project.

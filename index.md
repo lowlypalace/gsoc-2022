@@ -115,7 +115,7 @@ label_issues = clean_labels(
 -   `label_quality`: Label quality scores (between `0` to `1`) for each datapoint, where lower scores indicate labels less likely to be correct.
 -   `predicted_labels`: Class predicted by model trained on cleaned data.
 
-Here's an example of how it might look like:
+Here's an example of how it might look like if we take a look at the first three examples of a dataset.
 
 |  | is_label_issue |label_quality | predicted_labels|
 |--|--|--|--|

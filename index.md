@@ -1,5 +1,14 @@
 # GSoC 2022 | Python Software Foundation (Activeloop)
 
+This is a summary of the work I did for Activeloop's open-source open source package named [Hub](https://github.com/activeloopai/Hub) under the Python Software Foundation organization as part of Google Summer of Code 2022.
+
+## Project Details
+- Title: [Automated Dataset Tuning](https://summerofcode.withgoogle.com/programs/2022/projects/o6DWVntH)
+- Organization: [Python Software Foundation](https://www.python.org/psf/)
+- Repository: [Activeloop Hub](https://github.com/activeloopai/Hub)
+- Mentors: [Davit Buniatyan](https://github.com/davidbuniat), [Fariz Rahman](https://github.com/farizrahman4u), [Ivo Stranic](https://github.com/istranic), [Mikayel Harutyunyan](https://github.com/mikayelh)
+
+
 ## Introduction
 
 This summer, I got accepted as a contributor to the Python Software Foundation (Activeloop) in the 2022 Google Summer of Code. Activeloop's open-source open source package named [Hub](https://github.com/activeloopai/Hub) lets you store (even petabyte-scale) datasets on the cloud, and lets you seamlessly integrate it with your ML applications. The goal is to develop a set of data-centric APIs for a machine learning library that can optimize datasets with minimal parameters. I had about a month to come up with a technical solution. In this one month, I had to synthesize the requirements, research a large number of data-centric strategies (e.g., data augmentation, noise cleaning, data selection, self-supervision), review academic papers, and develop end-to-end pipelines for machine learning experiments to benchmark the performance of data-centric strategies for various computer vision tasks (e.g., classification). Taking into account all the possible strategies, there exists a huge number of options. Each of these specific strategies has hundreds of hyperparameters, and the way they are structured impacts the downstream model.

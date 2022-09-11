@@ -1,3 +1,4 @@
+
 # GSoC 2022 | Python Software Foundation (Activeloop)
 
 This is a summary of the work I did for Activeloop's open-source open source package named [Hub](https://github.com/activeloopai/Hub) under the Python Software Foundation organization as part of Google Summer of Code 2022.
@@ -55,7 +56,7 @@ Next, let's try to break down the second research question. Now that we have dis
 
 Let's try to break it down further. Again, we'll need a way to benchmark the approaches and compare them against each other. What if we ask ourselves a simpler question: *now that we have label errors, what if we remove the examples that are the noisiest (i.e., have little or no meaningful data) and attempt to fix or relabel the less noisy examples.* As Cleanlab provides us with quality scores for each example, we can try to prune the labels with the lowest quality scores and relabel the rest. Assumably, after training a model on clean data, we should be able to get the updated predictions for each label, which we can use to relabel the less noisy labels. 
 
-As a next step, we try to set a threshold that would tell us the ratio of examples we will remove to the examples we will relabel. With a threshold of 10%, we will prune the first top 10% labels with the lowest quality and relabel the rest of the examples. We can then see how the accuracy across various noise levels compares. Here, we tried to experiment with different threshold values for pruning and relabelling the images (remove 70% of the images with the lowest label quality but leave and relabel the rest). We started with a threshold of 0% (e.g., relabel all labels to the guessed labels) and then gradually increased the threshold value with a 10% step until we reached 100% prune level (remove all samples found to be erroneous). 
+As a next step, we try to set a threshold that would tell us the ratio of examples we will remove to the examples we will relabel. For example, with a threshold of **10%**, we will prune the first top **10%** examples with the lowest label quality and relabel the rest of the examples. We can then see how the accuracy across various noise levels compares. Here, we tried to experiment with different threshold values for pruning and relabelling the images. We started with a threshold of **0%** (e.g., relabel all labels to the guessed labels) and then gradually increased the threshold value with a **10%** step until we reached **100%** prune level (remove all samples found to be erroneous). 
 
 ![enter image description here](https://github.com/lowlypalace/gsoc-2022/raw/main/accuracy_threshold_plot.png)
 
@@ -63,9 +64,85 @@ On the graph, we plotted the accuracy of the models trained with training sets t
 
 Looking at the graph, we can say that Cleanlab does a great job identifying labels but not necessarily relabeling them automatically. As soon as we increase the number of labels we'd like to relabel, the accuracy starts to go down linearly. The training set with **100%** of pruning got the highest accuracy, while the training set with all labels relabelled got the worst accuracy. The confident learning approach can sometimes get it wrong, too, like confusing a correctly labeled image. Therefore, it is best to go through the examples in a dataset and decide whether to remove or relabel an example. With these insights, we know that it makes sense to provide users with the functionality to prune erroneous examples automatically. However, we might want to give the users some decision-making tools, such as quickly visualizing the labels that are most likely to be erroneous.
 
+## Development Phase
+After running the experiments, we now have enough insights that should allow us to move the next step. We'll need to provide an easy-to-use and clean interface to find label errors automatically and use these insights to make informed decisions on what to do next with these errors.
+
+Hub hosts a variety of datasets such as audio, image, object detection, and text datasets. However, Hub's focus is primarily on computer vision datasets. Within this domain, image classification, a task of assigning a label or class to an entire image,  is one of the most common ML problems. Images are expected to have only one class for each image. Image classification models take an image as input and return a prediction about which class the image belongs to. To scope out the problem, the support for image classification tasks was one of the first goals. In the first iteration, I created the first version of the API. By running the experiments, I had a good grasp on the internals of Cleanlab. After two weeks of coding, it was the time to finally put it all together in the first draft PR. Over the next few weeks, I had a number of syncs with the team where we iterated on the solution. 
+
+### Skorch Integration
+As some  `cleanlab`  features leverage  `scikit-learn`  compatibility, I had to deploy a wrapper for deep learning frameworks, such as PyTorch and Tensorflow to make them compatible. As PyTorch has been widely used within Hub's community, I implemented a wrapper for this library first. I wrapped the the neural net using  [`skorch`](https://skorch.readthedocs.io/en/stable/), which makes any PyTorch module scikit-learn compatible. Specifically, `skorch` provides a class  [`NeuralNet`](https://skorch.readthedocs.io/en/stable/net.html#skorch.net.NeuralNet "skorch.net.NeuralNet") that wraps the PyTorch [`Module`](https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module "(in PyTorch v1.10.1)") while providing an interface that should be familiar for sklearn users. However, as we mentioned before, Hub stores datasets in columnar format, where columns are reffered as *tensors*. For example, a simple image classification dataset might contain two tensors *images* and *labels*. To access an example of a `dataset`, we use `dataset.images[0]` to get the first image of a dataset and `dataset.labels[0]` to get the first label of a dataset. Therefore, I had to create a class that extends the `NeuralNet` class from `skorch` and overrides a few methods to be able to fetch examples in the training and validation loops. Another advantage of using `skorch` is that it also abstracts away the training loop and makes us write less boilerplate code to find label issues in a dataset. 
+
+To make our We'll use  `skorch()`  method from the `integrations` module. This function will wrap a PyTorch Module in a skorch  `NeuralNet`  and allow us to get access to common scikit-learn methods such as  `predict()`  and  `fit()`.
+
+```python
+from hub.integrations import skorch
+
+model = skorch(dataset=ds_train,
+			   epochs=15, # Set the number of epochs.
+			   batch_size=8,
+			   transform=transform,
+               shuffle=True) # Shuffle the data before each epoch.
+```
+
+Here, we won't be defining a custom PyTorch module, but feel free to pass any PyTorch network as  `module`  parameter to  `skorch()`  method. As we don't specify any module, the predefined model  `torchvision.models.resnet18()`  will be used by default. We've set  `epochs=15`  above, but feel free to lower this value to train the model faster or increase it to improve the results. There are many other useful parameters that can be passed in to a  `skorch`  instance, such as  `valid_dataset`  to be used for the validation. Make sure to check out docs to learn more about them!
+
+### Cleanlab Integration
+
+Let’s look at how we can find label errors in a Hub dataset. We will use a `clean_labels()` method from `cleanlab` module. In general, `cleanlab` uses predictions from a trained classifier to identify label issues in the data. However, if we train a classifier on some of this data, then its predictions on the same data will become untrustworthy due to overfitting. To overcome this, the function will run cross-validation to get **out-of-sample** predicted probabilities for each example in the dataset.
+
+
+
+```python
+from hub.integrations.cleanlab import clean_labels
+
+model_copy = reset_model(model) # Initialize a fresh untrained model.
+
+label_issues = clean_labels(
+					dataset=ds_train,
+					model=model_copy, # Pass instantiated skorch module.
+					folds=5, # Set the number of folds for cross-validation.
+)
+```
+
+`label_issues` is a pandas DataFrame of label issues for each example. Each row represents an example from the dataset and the DataFrame contains the following columns:
+
+-   `is_label_issue`: A boolean mask for the entire dataset where `True` represents a label issue and `False` represents an example that is confidently/accurately labeled.
+-   `label_quality`: Label quality scores (between `0` to `1`) for each datapoint, where lower scores indicate labels less likely to be correct.
+-   `predicted_labels`: Class predicted by model trained on cleaned data.
+
+Here's an example of how it might look like:
+|  | is_label_issue |label_quality | predicted_labels|
+|--|--|--|--|
+| 0 | False | 0.423514| 1 |
+| 1 | True |0.001363 | 0 |
+| 2 | False | 0.998112 | 3 |
+
+To visualize the labels in [Dataset Visualization](https://docs.activeloop.ai/dataset-visualization), we can use a method `create_tensors()` that will help us to automatically create a tensor group `label_issues`. The tensors in this group would represent the columns `is_label_issue`, `label_quality` and `predicted_labels`. 
+
+```python
+create_tensors(
+			dataset=ds_train,
+			label_issues=label_issues, # Pass label_issues computed before.
+			branch="main", # Commit changes to main branch.
+			)
+```
+
+Now, we can easily sort the labels with the lowest label quality scores by sorting on  `label_issues/label_quality_scores`  tensor. The label quality score is between  `0`  and  `1`, where  `0`  is a dirty label and  `1`  is a clean label. In general, you should first analyze the samples that have the lowest quality scores as these examples are most likely to be incorrect. Therefore, before moving further down the list, you can remove or relabel these samples. Additionally, we can view all labels with errors by running a query:  `select * where "label_issues/is_label_issue" == true'`. We can also take a look at the guessed labels for each example in a dataset by viewing  `label_issues/is_label_issue`  tensor.
+
+Another handy method is `clean_view()`, which allows us to get a view of the dataset with clean labels. This could be helpful if we'd like to have a dataset view where only clean labels are present, and the rest are filtered out.
+
+```python
+ds_clean = clean_view(dataset=ds_train, label_issues=label_issues)
+```
+
+
+## Contributions
+- Link to the PR: [Cleanlab + Skorch Integration](https://github.com/activeloopai/Hub/pull/1821)
+- Tutorial of the Workflow (Google Colab): [Finding Label Errors in Image Classification Dataset](https://colab.research.google.com/drive/1ufji2akWX0r6DcUD70vK3KiBvq0m6xbq?usp=sharing)
+- Blog Post: 
 
 ## GSoC Experience
-I had an ambiguous high-level problem that I was trying to solve, and I was fortunate that the mentors gave me a lot of freedom to solve this problem. It's not something I can take for granted as I had a high responsibility to my mentors, but it was really rewarding to own the whole technical process from big idea to shipping out the solution. During my GSoC, I found myself drawing on much more than just my experience in software engineering. For example, I utilized my experience in academic research, presentation skills, and writing to execute the project successfully. Additionally, I improved my leadership and communication skills by co-leading community efforts. I welcomed new open source contributors to Hub, assigned them tasks, and helped them get started. 
+I had an ambiguous high-level problem that I was trying to solve, and I was fortunate that the mentors gave me a lot of freedom to solve this problem. It's not something I can take for granted as I had a high responsibility to my mentors, but it was really rewarding to own the whole technical process from big idea to shipping out the solution. During my GSoC, I found myself drawing on much more than just my experience in software engineering. For example, I utilized my experience in academic research, presentation skills, and writing to execute the project successfully. I learned how to collaborate on a product across other teams, and, perhaps, most importantly, how to take feedback and iterate rapidly. Additionally, I improved my leadership and communication skills by co-leading community efforts. I welcomed new open source contributors to Hub, assigned them tasks, and helped them get started. 
 
 Even though the codebase is immense and unfamiliar to me, I succeeded in this project because I learned to ask the right questions to understand the scope of a problem. Even if I'm unfamiliar with the technology, I can ask strategic questions to get enough understanding to work towards a solution. I also always come back to thinking about how a user might experience a feature or what else they might need or want. This has helped me stay focused on the problem I'm solving, even though a problem was ambiguous. It's also important not to be afraid when facing a new problem. In my day-to-day, I was constantly working on things that were new to me or that I'd never done before. This is just one feature I developed within a large codebase, but it shows how I could start with the high-level goal, carefully consider the technical implications and design a  solution.
 

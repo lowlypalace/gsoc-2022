@@ -72,7 +72,7 @@ Hub hosts a variety of datasets such as audio, image, object detection, and text
 ### Skorch Integration
 As some  `cleanlab`  features leverage  `scikit-learn`  compatibility, I had to deploy a wrapper for deep learning frameworks, such as PyTorch and Tensorflow to make them compatible. As PyTorch has been widely used within Hub's community, I implemented a wrapper for this library first. I wrapped the the neural net using  [`skorch`](https://skorch.readthedocs.io/en/stable/), which makes any PyTorch module scikit-learn compatible. Specifically, `skorch` provides a class  [`NeuralNet`](https://skorch.readthedocs.io/en/stable/net.html#skorch.net.NeuralNet "skorch.net.NeuralNet") that wraps the PyTorch [`Module`](https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module "(in PyTorch v1.10.1)") while providing an interface that should be familiar for sklearn users. However, as we mentioned before, Hub stores datasets in columnar format, where columns are reffered as *tensors*. For example, a simple image classification dataset might contain two tensors *images* and *labels*. To access an example of a `dataset`, we use `dataset.images[0]` to get the first image of a dataset and `dataset.labels[0]` to get the first label of a dataset. Therefore, I had to create a class that extends the `NeuralNet` class from `skorch` and overrides a few methods to be able to fetch examples in the training and validation loops. Another advantage of using `skorch` is that it also abstracts away the training loop and makes us write less boilerplate code to find label issues in a dataset. 
 
-To make our We'll use  `skorch()`  method from the `integrations` module. This function will wrap a PyTorch Module in a skorch  `NeuralNet`  and allow us to get access to common scikit-learn methods such as  `predict()`  and  `fit()`.
+To make our model `scikit-learn` compatible, we'll use  `skorch()`  method from the `integrations` module. This function will wrap a PyTorch Module in a skorch  `NeuralNet`  and allow us to get access to common scikit-learn methods such as  `predict()`  and  `fit()`.
 
 ```python
 from hub.integrations import skorch
@@ -91,8 +91,6 @@ Here, we won't be defining a custom PyTorch module, but feel free to pass any Py
 ### Cleanlab Integration
 
 Let’s look at how we can find label errors in a Hub dataset. We will use a `clean_labels()` method from `cleanlab` module. In general, `cleanlab` uses predictions from a trained classifier to identify label issues in the data. However, if we train a classifier on some of this data, then its predictions on the same data will become untrustworthy due to overfitting. To overcome this, the function will run cross-validation to get **out-of-sample** predicted probabilities for each example in the dataset.
-
-
 
 ```python
 from hub.integrations.cleanlab import clean_labels

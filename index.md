@@ -136,9 +136,9 @@ ds_clean = clean_view(dataset=ds_train, label_issues=label_issues)
 
 
 ## Contributions
-- Link to the PR: [Cleanlab + Skorch Integration](https://github.com/activeloopai/Hub/pull/1821)
-- Tutorial of the Workflow (Google Colab): [Finding Label Errors in Image Classification Dataset](https://colab.research.google.com/drive/1ufji2akWX0r6DcUD70vK3KiBvq0m6xbq?usp=sharing)
-- Blog Post: 
+- Pull Request: [Cleanlab + Skorch Integration](https://github.com/activeloopai/Hub/pull/1821)
+- Tutorial of the Workflow (Colab): [Finding Label Errors in Image Classification Dataset](https://colab.research.google.com/drive/1ufji2akWX0r6DcUD70vK3KiBvq0m6xbq?usp=sharing)
+- Blog Post: TBA
 
 ## GSoC Experience
 I had an ambiguous high-level problem that I was trying to solve, and I was fortunate that the mentors gave me a lot of freedom to solve this problem. It's not something I can take for granted as I had a high responsibility to my mentors, but it was really rewarding to own the whole technical process from big idea to shipping out the solution. During my GSoC, I found myself drawing on much more than just my experience in software engineering. For example, I utilized my experience in academic research, presentation skills, and writing to execute the project successfully. I learned how to collaborate on a product across other teams, and, perhaps, most importantly, how to take feedback and iterate rapidly. Additionally, I improved my leadership and communication skills by co-leading community efforts. I welcomed new open source contributors to Hub, assigned them tasks, and helped them get started. 

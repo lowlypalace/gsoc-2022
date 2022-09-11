@@ -126,6 +126,8 @@ Here's an example of how it might look like:
 To visualize the labels in [Dataset Visualization](https://docs.activeloop.ai/dataset-visualization), we can use a method `create_tensors()` that will help us to automatically create a tensor group `label_issues`. The tensors in this group would represent the columns `is_label_issue`, `label_quality` and `predicted_labels`. 
 
 ```python
+from hub.integrations.cleanlab import create_tensors
+
 create_tensors(
     dataset=ds_train,
     label_issues=label_issues,  # Pass label_issues computed before.
@@ -138,13 +140,15 @@ Now, we can easily sort the labels with the lowest label quality scores by sorti
 Another handy method is `clean_view()`, which allows us to get a view of the dataset with clean labels. This could be helpful if we'd like to have a dataset view where only clean labels are present, and the rest are filtered out. This dataset can then be passed down to downstream ML frameworks for training.
 
 ```python
+from hub.integrations.cleanlab import clean_view
+
 ds_clean = clean_view(dataset=ds_train, label_issues=label_issues)
 ```
 
 ## GSoC Experience
-I had an ambiguous high-level problem that I was trying to solve, and I was fortunate that the mentors gave me a lot of freedom to solve this problem. It's not something I can take for granted as I had a high responsibility to my mentors, but it was really rewarding to own the whole technical process from big idea to shipping out the solution. During my GSoC, I found myself drawing on much more than just my experience in software engineering. For example, I utilized my experience in academic research, presentation skills, and writing to execute the project successfully. I learned how to collaborate on a product across other teams, and, perhaps, most importantly, how to take feedback and iterate rapidly. Additionally, I improved my leadership and communication skills by co-leading community efforts. I welcomed new open source contributors to Hub, assigned them tasks, and helped them get started. 
+I had an ambiguous high-level problem that I was trying to solve, and I was fortunate that the mentors gave me a lot of freedom to solve this problem. It's not something I can take for granted as I had a high responsibility to my mentors, but it was really rewarding to own the whole technical process from big idea to shipping out the solution. During my GSoC, I found myself drawing on much more than just my experience in software engineering. For example, I utilized my experience in academic research, presentation skills, and writing to execute the project successfully. I learned how to collaborate on a product across other teams, and, perhaps, most importantly, how to take feedback and iterate rapidly. Additionally, I improved my leadership and communication skills by co-leading community efforts. I welcomed new open source contributors to Hub, assigned them tasks, and helped them to get started. 
 
-Even though the codebase is immense and unfamiliar to me, I succeeded in this project because I learned to ask the right questions to understand the scope of a problem. Even if I'm unfamiliar with the technology, I can ask strategic questions to get enough understanding to work towards a solution. I also always come back to thinking about how a user might experience a feature or what else they might need or want. This has helped me stay focused on the problem I'm solving, even though a problem was ambiguous. It's also important not to be afraid when facing a new problem. In my day-to-day, I was constantly working on things that were new to me or that I'd never done before. This is just one feature I developed within a large codebase, but it shows how I could start with the high-level goal, carefully consider the technical implications and design a  solution.
+Even though the codebase was immense and unfamiliar to me, I think I succeeded in this project because I learned to ask the right questions to understand the scope of a problem. Even if I'm unfamiliar with the technology, I can ask strategic questions to get enough understanding to work towards a solution. I also always come back to thinking about how a user might experience a feature or what else they might need or want. This has helped me stay focused on the problem I'm solving, even though the problem was ambiguous. It's also important not to be afraid when facing a new problem. In my day-to-day, I was constantly working on things that were new to me or that I'd never done before. This is just one feature I developed within a large codebase, but it shows how I could start with the high-level goal, carefully consider the technical implications and design the solution.
 
 ## Takeaways
 

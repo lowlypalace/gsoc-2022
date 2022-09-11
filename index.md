@@ -97,8 +97,6 @@ Let’s look at how we can find label errors in a Hub dataset. We will use a `cl
 ```python
 from hub.integrations.cleanlab import clean_labels
 
-model_copy = reset_model(model)  # Initialize a fresh untrained model.
-
 label_issues = clean_labels(
     dataset=ds_train,
     model=model_copy,  # Pass instantiated skorch module.

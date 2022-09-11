@@ -1,4 +1,6 @@
-title: GSoC 2022 | Python Software Foundation
+---
+title: "GSoC 2022 | Python Software Foundation"
+---
 
 This is a summary of the work I did for Activeloop's open-source open source package named [Hub](https://github.com/activeloopai/Hub) under the Python Software Foundation organization as part of Google Summer of Code 2022.
 

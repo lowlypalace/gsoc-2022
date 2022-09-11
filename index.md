@@ -132,7 +132,7 @@ create_tensors(
 
 Now, we can easily sort the labels with the lowest label quality scores by sorting on  `label_issues/label_quality_scores`  tensor. The label quality score is between  `0`  and  `1`, where  `0`  is a dirty label and  `1`  is a clean label. In general, you should first analyze the samples that have the lowest quality scores as these examples are most likely to be incorrect. Therefore, before moving further down the list, you can remove or relabel these samples. Additionally, we can view all labels with errors by running a query:  `select * where "label_issues/is_label_issue" == true'`. We can also take a look at the guessed labels for each example in a dataset by viewing  `label_issues/is_label_issue`  tensor.
 
-Another handy method is `clean_view()`, which allows us to get a view of the dataset with clean labels. This could be helpful if we'd like to have a dataset view where only clean labels are present, and the rest are filtered out.
+Another handy method is `clean_view()`, which allows us to get a view of the dataset with clean labels. This could be helpful if we'd like to have a dataset view where only clean labels are present, and the rest are filtered out. This dataset can then be passed down to downstream ML frameworks for training.
 
 ```python
 ds_clean = clean_view(dataset=ds_train, label_issues=label_issues)

@@ -111,6 +111,7 @@ label_issues = clean_labels(
 -   `predicted_labels`: Class predicted by model trained on cleaned data.
 
 Here's an example of how it might look like:
+
 |  | is_label_issue |label_quality | predicted_labels|
 |--|--|--|--|
 | 0 | False | 0.423514| 1 |

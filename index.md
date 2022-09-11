@@ -77,11 +77,13 @@ To make our We'll use  `skorch()`  method from the `integrations` module. This f
 ```python
 from hub.integrations import skorch
 
-model = skorch(dataset=ds_train,
-			   epochs=15, # Set the number of epochs.
-			   batch_size=8,
-			   transform=transform,
-               shuffle=True) # Shuffle the data before each epoch.
+model = skorch(
+    dataset=ds_train,
+    epochs=15,  # Set the number of epochs.
+    batch_size=8,
+    transform=transform,
+    shuffle=True, # Shuffle the data before each epoch.
+) 
 ```
 
 Here, we won't be defining a custom PyTorch module, but feel free to pass any PyTorch network as  `module`  parameter to  `skorch()`  method. As we don't specify any module, the predefined model  `torchvision.models.resnet18()`  will be used by default. We've set  `epochs=15`  above, but feel free to lower this value to train the model faster or increase it to improve the results. There are many other useful parameters that can be passed in to a  `skorch`  instance, such as  `valid_dataset`  to be used for the validation. Make sure to check out docs to learn more about them!
@@ -95,12 +97,12 @@ Let’s look at how we can find label errors in a Hub dataset. We will use a `cl
 ```python
 from hub.integrations.cleanlab import clean_labels
 
-model_copy = reset_model(model) # Initialize a fresh untrained model.
+model_copy = reset_model(model)  # Initialize a fresh untrained model.
 
 label_issues = clean_labels(
-					dataset=ds_train,
-					model=model_copy, # Pass instantiated skorch module.
-					folds=5, # Set the number of folds for cross-validation.
+    dataset=ds_train,
+    model=model_copy,  # Pass instantiated skorch module.
+    folds=5,  # Set the number of folds for cross-validation.
 )
 ```
 
@@ -121,10 +123,10 @@ To visualize the labels in [Dataset Visualization](https://docs.activeloop.ai/da
 
 ```python
 create_tensors(
-			dataset=ds_train,
-			label_issues=label_issues, # Pass label_issues computed before.
-			branch="main", # Commit changes to main branch.
-			)
+    dataset=ds_train,
+    label_issues=label_issues,  # Pass label_issues computed before.
+    branch="main",  # Commit changes to main branch.
+)
 ```
 
 Now, we can easily sort the labels with the lowest label quality scores by sorting on  `label_issues/label_quality_scores`  tensor. The label quality score is between  `0`  and  `1`, where  `0`  is a dirty label and  `1`  is a clean label. In general, you should first analyze the samples that have the lowest quality scores as these examples are most likely to be incorrect. Therefore, before moving further down the list, you can remove or relabel these samples. Additionally, we can view all labels with errors by running a query:  `select * where "label_issues/is_label_issue" == true'`. We can also take a look at the guessed labels for each example in a dataset by viewing  `label_issues/is_label_issue`  tensor.

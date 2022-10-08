@@ -35,7 +35,7 @@ We've talked about how label errors can be detrimental to the success of an ML p
 
 By communicating with my mentors, we set up a few research questions that we were looking to answer:
 
-> ***Research Question 1**: What is the impact of label errors on a model performance? Can we implement an experiment that will enable us to quantify the impact? How do we ensure that our experiments are unbiased and reproducible?*
+> ***Research Question 1**: What is the impact of label errors on a model performance? Can we implement an experiment that will enable us to quantify the impact? How do we ensure that our experiments are stable and reproducible?*
 
 > ***Research Question 2**: Assuming that the label errors could be found, what would be the following steps to fix the errors? Can we find a way to prune or relabel noisy examples from a dataset automatically? Does it make sense to leave some examples but correct their labels?*
 

@@ -14,7 +14,7 @@ This is a summary of the work I did for Activeloop's open-source open source pac
 - Pull Request: [Cleanlab + Skorch Integration](https://github.com/activeloopai/Hub/pull/1821)
 - Workflow Tutorial  (Colab): [Finding Label Errors in Image Classification Dataset](https://colab.research.google.com/drive/1ufji2akWX0r6DcUD70vK3KiBvq0m6xbq?usp=sharing)
 - Uploaded Datasets: [DCAI Roman Train](https://app.activeloop.ai/activeloop/dcai-roman-train), [DCAI Roman Test](https://app.activeloop.ai/lowlypalace/dcai-roman-test)
-- Blog Post: TBA
+- Blog Post: [Improving ML Datasets with Deep Lake & Cleanlab](https://lowlypalace.notion.site/Improving-ML-Datasets-with-Deep-Lake-Cleanlab-977291aacf244bad82b1502f0ed2326d)
 
 ## Introduction
 
